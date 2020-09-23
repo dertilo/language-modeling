@@ -1,0 +1,3 @@
+wandb
+sagemaker
+util@git+https://github.com/dertilo/util.git#egg=util
