@@ -151,6 +151,9 @@ def main():
 
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+    training_args.do_train = True
+    training_args.do_eval = True
+    data_args.mlm = True
 
     if data_args.eval_data_file is None and training_args.do_eval:
         raise ValueError(
@@ -167,6 +170,21 @@ def main():
         raise ValueError(
             f"Output directory ({training_args.output_dir}) already exists and is not empty. Use --overwrite_output_dir to overcome."
         )
+
+    training_args.output_dir = os.environ["SM_OUTPUT_DATA_DIR"]
+    input_path = os.environ["SM_CHANNEL_TRAINING"]
+    folder = "wikitext-2-raw-v1"
+    cmd = "tar xzf %s -C %s" % (input_path + "/" + folder + ".tar.gz", input_path)
+
+    assert os.system(cmd) == 0
+    data_folder = f"{input_path}/{folder}"
+
+    data_args.train_data_file = f"{data_folder}/wikitext-2-raw/{data_args.train_data_file}"
+    data_args.eval_data_file = f"{data_folder}/wikitext-2-raw/{data_args.eval_data_file}"
+    checkpoint_path = training_args.output_dir + "/checkpoints"
+
+    os.system(f"ln -s {training_args.output_dir} /root/.cache/torch/transformers")
+    os.system(f"echo 'what' > {checkpoint_path}/what.file")
 
     # Setup logging
     logging.basicConfig(
