@@ -24,6 +24,12 @@ import logging
 import math
 import os
 from dataclasses import dataclass, field
+
+with open("secrets.env", "r") as f:
+    key = f.readline().strip("\n").replace("WANDB_API_KEY=", "")
+os.environ["WANDB_API_KEY"] = key
+
+import wandb
 from typing import Optional
 
 from transformers import (
@@ -40,7 +46,7 @@ from transformers import (
     TextDataset,
     Trainer,
     TrainingArguments,
-    set_seed,
+    set_seed, is_wandb_available,
 )
 
 
@@ -152,7 +158,7 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     training_args.do_train = True
-    training_args.do_eval = True
+    # training_args.do_eval = True
     data_args.mlm = True
 
     if data_args.eval_data_file is None and training_args.do_eval:
@@ -183,8 +189,11 @@ def main():
     data_args.eval_data_file = f"{data_folder}/wikitext-2-raw/{data_args.eval_data_file}"
     checkpoint_path = training_args.output_dir + "/checkpoints"
 
-    os.system(f"ln -s {training_args.output_dir} /root/.cache/torch/transformers")
-    os.system(f"echo 'what' > {checkpoint_path}/what.file")
+    project_name = "language-modeling"
+    os.environ["WANDB_PROJECT"]=project_name
+    wandb.init(project=project_name) # TODO(tilo): is this really necessary? should be done by ML-library ( here transformers)
+    assert wandb.api.api_key is not None
+    assert is_wandb_available() # TODO(tilo): somehow I had issues, which seem to have resolved themselves
 
     # Setup logging
     logging.basicConfig(
