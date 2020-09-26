@@ -27,3 +27,8 @@ python run_language_modeling.py \
 ```
 
     --per_gpu_train_batch_size 2 --per_gpu_eval_batch_size 2
+    
+# google colab
+```shell script
+rclone sync -P --exclude ".git/**" --exclude ".idea/**" --exclude "build/**" --exclude "*.pyc" --max-size 100k $HOME/code/NLP/language-modeling dertilo-googledrive:language-modeling
+```

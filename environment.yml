@@ -1,0 +1,20 @@
+name: language_modeling
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+  - anaconda
+dependencies:
+  - python=3.8
+  - cudatoolkit=10.1
+  - pytorch=1.6.0
+  - pytorch-lightning
+  - wget
+  - tqdm
+  - numba
+  - python-levenshtein
+  - wandb
+  - pip:
+      - "util@git+https://git@github.com/dertilo/util.git#egg=util"
+      - "git+https://github.com/huggingface/transformers.git@2c8ecdf8a87019c438262d8c692e1bdffe05149f"
+      - test_tube
