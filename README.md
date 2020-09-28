@@ -13,7 +13,6 @@ export WANDB_PROJECT=language-modeling
 ```
 * train
 ```shell script
-
 python run_language_modeling.py \
     --output_dir=output \
     --run_name=debug \
@@ -25,9 +24,8 @@ python run_language_modeling.py \
     --train_data_file=$TRAIN_FILE \
     --eval_data_file=$TEST_FILE 
 ```
+* results: `perplexity = 19.756381741458434` after 30 min on Tesla G4, see [wandb](https://wandb.ai/dertilo/language-modeling/runs/11wv8bfb/overview)
 
-    --per_gpu_train_batch_size 2 --per_gpu_eval_batch_size 2
-    
 # google colab
 ```shell script
 rclone sync -P --exclude ".git/**" --exclude ".idea/**" --exclude "build/**" --exclude "*.pyc" --max-size 100k $HOME/code/NLP/language-modeling dertilo-googledrive:language-modeling
